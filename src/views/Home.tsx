@@ -2455,8 +2455,13 @@ create policy "Allow public delete access" on public.urls for delete using (true
     // Config: API connection targets.
     // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
     const getBaseUrl = () => {
+      const activeBackend = 'https://saqibveo.vercel.app';
       if (window.location.protocol === 'file:') {
-        return '${window.location.origin}';
+        return activeBackend;
+      }
+      const hostname = window.location.hostname;
+      if (hostname.includes('vercel.app') && !hostname.includes('yx7ihxcpy42n2nxzrgvgse')) {
+        return activeBackend;
       }
       return window.location.origin;
     };

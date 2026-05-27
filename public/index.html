@@ -288,9 +288,20 @@
     // Config: API connection targets.
     // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
     const getBaseUrl = () => {
+      const activeBackend = 'https://saqibveo.vercel.app';
+      
+      // If we are running on standard local file protocol, we must use the active backend
       if (window.location.protocol === 'file:') {
-        return 'https://ais-pre-c35cddpwibg2oqcpxijqlz-21412174491.europe-west1.run.app';
+        return activeBackend;
       }
+      
+      const hostname = window.location.hostname;
+      // If the user hosts index.html as a standalone static file on Vercel (where Next.js API routes are not present), 
+      // we route requests to our working active backend so everything functions cleanly.
+      if (hostname.includes('vercel.app') && !hostname.includes('yx7ihxcpy42n2nxzrgvgse')) {
+        return activeBackend;
+      }
+      
       return window.location.origin;
     };
 
