@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test API</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; padding: 2rem; }
+    input, button { padding: 0.5rem; margin-bottom: 1rem; display: block; width: 100%; max-width: 400px; }
+    button { background: #10b981; color: #000; border: none; font-weight: bold; cursor: pointer; }
+    pre { background: #222; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+
+  <h2>API Request Tester</h2>
+  
+  <label>API Endpoint:</label>
+  <input type="text" id="apiUrl" value="/api/shorten" />
+
+  <label>Long URL to shorten:</label>
+  <input type="text" id="longUrl" value="https://google.com" />
+
+  <button onclick="testAPI()">⚡ POST Request</button>
+
+  <h3>API RESPONSE:</h3>
+  <pre id="responseBox">Awaiting request...</pre>
+
+  <script>
+    async function testAPI() {
+      const url = document.getElementById('apiUrl').value;
+      const longUrl = document.getElementById('longUrl').value;
+      const responseBox = document.getElementById('responseBox');
+      
+      responseBox.textContent = 'Loading...';
+      
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            longUrl: longUrl,
+            deviceId: 'test-device'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          responseBox.style.color = '#34d399';
+          responseBox.textContent = JSON.stringify(data, null, 2);
+        } else {
+          responseBox.style.color = '#ef4444';
+          responseBox.textContent = 'Error: ' + JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        responseBox.style.color = '#ef4444';
+        responseBox.textContent = 'Network Error: Failed to fetch\n' + err.message;
+      }
+    }
+  </script>
+</body>
+</html>

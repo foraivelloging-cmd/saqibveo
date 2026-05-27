@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-rgb: rgb-border 3s linear infinite;
+}
+
+@keyframes rgb-border {
+  0% {
+    border-color: #ff0000;
+    box-shadow: 0 0 10px #ff0000, inset 0 0 10px #ff0000;
+  }
+  33% {
+    border-color: #00ff00;
+    box-shadow: 0 0 10px #00ff00, inset 0 0 10px #00ff00;
+  }
+  66% {
+    border-color: #0000ff;
+    box-shadow: 0 0 10px #0000ff, inset 0 0 10px #0000ff;
+  }
+  100% {
+    border-color: #ff0000;
+    box-shadow: 0 0 10px #ff0000, inset 0 0 10px #ff0000;
+  }
+}
