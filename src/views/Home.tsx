@@ -2501,7 +2501,11 @@ create policy "Allow public delete access" on public.urls for delete using (true
     // Set current download payload
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
-      downloadBtn.href = window.location.href;
+      if (window.location.protocol === 'file:') {
+        downloadBtn.href = 'https://saqibveo.vercel.app/index.html';
+      } else {
+        downloadBtn.href = window.location.origin + '/index.html';
+      }
     }
 
     // Interactive Fields Setup
