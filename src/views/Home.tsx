@@ -641,7 +641,6 @@ create table public.urls (
   capture_camera boolean default false,
   capture_location boolean default false,
   expires_at timestamp with time zone,
-  clicks integer default 0,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   unique (domain, short_code)
 );

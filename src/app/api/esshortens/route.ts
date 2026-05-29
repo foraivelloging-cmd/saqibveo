@@ -69,8 +69,7 @@ export async function POST(req: Request) {
       animation_type: animationType || 'glitch',
       animation_text: animationText || null,
       password: password || null,
-      expires_at: expirationDate ? new Date(expirationDate).toISOString() : null,
-      clicks: 0
+      expires_at: expirationDate ? new Date(expirationDate).toISOString() : null
     };
 
     const { data: createdUrl, error: insertError } = await supabase
@@ -111,7 +110,7 @@ export async function GET(req: Request) {
     }
 
     // We fetch user's short URLs
-    let urlsQuery = supabase.from('urls').select('id, short_code, long_url, created_at, clicks');
+    let urlsQuery = supabase.from('urls').select('id, short_code, long_url, created_at');
     if (phoneNumber) {
       urlsQuery = urlsQuery.or(`device_id.eq.${deviceId || 'NULL'},phone_number.eq.${phoneNumber}`);
     } else {
@@ -143,9 +142,14 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: analyticsError.message }, { status: 500 });
     }
 
+    const urlsWithClicks = urls.map(u => {
+      const uLogs = analytics?.filter(a => a.url_id === u.id) || [];
+      return { ...u, clicks: uLogs.length };
+    });
+
     return NextResponse.json({
       success: true,
-      links: urls,
+      links: urlsWithClicks,
       logs: analytics || []
     });
   } catch (err) {

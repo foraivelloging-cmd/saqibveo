@@ -139,11 +139,7 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         webgl_renderer: webglRenderer
       });
 
-      // Update clicks count in urls table
-      const { data: currentData } = await supabase.from('urls').select('clicks').eq('id', id).single();
-      if (currentData) {
-        await supabase.from('urls').update({ clicks: (currentData.clicks || 0) + 1 }).eq('id', id);
-      }
+      // No longer updating 'clicks' on urls table since column doesn't exist
     } catch (err) {
       console.error("Log failed:", err);
     }
