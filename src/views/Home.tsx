@@ -74,7 +74,9 @@ export default function Home() {
   const [showSyncModal, setShowSyncModal] = useState(false);
   const [showApiModal, setShowApiModal] = useState(false);
   const [apiDocsCopied, setApiDocsCopied] = useState(false);
-  const [apiModalTab, setApiModalTab] = useState<'json' | 'html'>('json');
+  const [apiModalTab, setApiModalTab] = useState<'json' | 'code' | 'html'>('json');
+  const [codeSnippetLang, setCodeSnippetLang] = useState<'node-bot' | 'py-bot' | 'curl' | 'node-fetch' | 'py-requests'>('node-bot');
+  const [snippetCopied, setSnippetCopied] = useState(false);
   const [apiHtmlCopied, setApiHtmlCopied] = useState(false);
   
   const [analyticsLink, setAnalyticsLink] = useState<any>(null);
@@ -331,7 +333,7 @@ export default function Home() {
     }
     
     try {
-      const response = await fetch('/api/shorten', {
+      const response = await fetch('/api/esshortens', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2053,24 +2055,33 @@ create policy "Allow public delete access" on public.urls for delete using (true
             </p>
 
             {/* Navigation Tabs */}
-            <div className="flex bg-white/5 p-1 rounded-xl mb-6 shrink-0">
+            <div className="flex bg-white/5 p-1 rounded-xl mb-6 shrink-0 gap-1">
               <button 
                 onClick={() => setApiModalTab('json')}
                 className={cn(
-                  "flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all",
+                  "flex-1 py-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
                   apiModalTab === 'json' ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-white"
                 )}
               >
                 JSON API Docs
               </button>
               <button 
-                onClick={() => setApiModalTab('html')}
+                onClick={() => setApiModalTab('code')}
                 className={cn(
-                  "flex-1 py-2 text-xs font-bold uppercase tracking-widest rounded-lg transition-all",
-                  apiModalTab === 'html' ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-white"
+                  "flex-1 py-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
+                  apiModalTab === 'code' ? "bg-blue-600 text-white" : "text-zinc-400 hover:text-white"
                 )}
               >
-                Standalone HTML App (index.html)
+                Bot / SDK Codes
+              </button>
+              <button 
+                onClick={() => setApiModalTab('html')}
+                className={cn(
+                  "flex-1 py-2 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all",
+                  apiModalTab === 'html' ? "bg-emerald-600 text-white" : "text-zinc-400 hover:text-white"
+                )}
+              >
+                Standalone HTML
               </button>
             </div>
             
@@ -2078,45 +2089,45 @@ create policy "Allow public delete access" on public.urls for delete using (true
               <>
                 <div className="flex-1 overflow-y-auto custom-scrollbar mb-6 bg-black/50 border border-white/5 rounded-xl p-4 font-mono text-[11px] text-zinc-400 space-y-4">
                   <div>
-                    <span className="text-green-400 font-bold">1. CREATE SHORTLINK (POST)</span>
+                    <span className="text-emerald-400 font-bold">1. CREATE SMART SHORTLINK (POST)</span>
                     <br/>
                     <span className="text-zinc-500">URL:</span> {window.location.origin}/api/shorten
                   </div>
                   <div>
-                    <span className="text-zinc-300">Headers:</span>
+                    <span className="text-zinc-300 font-medium">Headers:</span>
                     <br/>
                     &nbsp;&nbsp;Content-Type: application/json
                   </div>
                   <div>
-                    <span className="text-zinc-300">Body Params (JSON):</span>
+                    <span className="text-zinc-300 font-medium font-bold">Body Params (JSON):</span>
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">longUrl</span> (string, req): Destination link
+                    &nbsp;&nbsp;<span className="text-blue-400 font-semibold">longUrl</span> (string, req): Destination link URL
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">customAlias</span> (string, opt): Custom alias text
+                    &nbsp;&nbsp;<span className="text-blue-400">customAlias</span> (string, opt): Desired custom identifier path
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">phoneNumber</span> (string, req if no deviceId): Identifies user for bot
+                    &nbsp;&nbsp;<span className="text-blue-400">phoneNumber</span> (string, opt): Bot/User identifier (used to dynamically fetch click telemetry back across channels)
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">captureCamera</span> (boolean, opt): Wait for camera auth
+                    &nbsp;&nbsp;<span className="text-blue-400">captureCamera</span> (boolean, opt): Requests facial camera verification step
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">captureLocation</span> (boolean, opt): GPS tracking auth
+                    &nbsp;&nbsp;<span className="text-blue-400">captureLocation</span> (boolean, opt): Requests precise GPS authorization step
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">socialGateTitle</span> (string, opt): Lock title
+                    &nbsp;&nbsp;<span className="text-blue-400">socialGateTitle</span> (string, opt): Custom social verification banner Title
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">socialGateUrl</span> (string, opt): Verification lock URL
+                    &nbsp;&nbsp;<span className="text-blue-400">socialGateUrl</span> (string, opt): External verification redirect URL
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">password</span> (string, opt): Password string
+                    &nbsp;&nbsp;<span className="text-blue-400">password</span> (string, opt): Setup dynamic password authorization lock
                     <br/>
-                    &nbsp;&nbsp;<span className="text-blue-400">deviceId</span> (string, opt): Auto UI identification sync
+                    &nbsp;&nbsp;<span className="text-blue-400">deviceId</span> (string, opt): Auto browser sync track identification
                   </div>
                   <div className="border-t border-white/5 pt-3">
-                    <span className="text-green-400 font-bold">2. FETCH LATEST CAPTURED INTEL (GET)</span>
+                    <span className="text-emerald-400 font-bold">2. FETCH CAPTURED TELEMETRY LOGS (GET)</span>
                     <br/>
-                    <span className="text-zinc-500">URL:</span> {window.location.origin}/api/shorten?phoneNumber=<span className="text-blue-400">YOUR_PHONE</span>
+                    <span className="text-zinc-500">URL:</span> {window.location.origin}/api/shorten?phoneNumber=<span className="text-blue-400">YOUR_TELEGRAM_ID_OR_PHONE</span>
                     <br/>
                     <span className="text-zinc-500">Alternative:</span> .../api/shorten?deviceId=<span className="text-blue-400">YOUR_DEVICE_ID</span>
                   </div>
                   <div>
-                    <span className="text-zinc-300">Response (GET/POST - Latest Click is Returned):</span>
+                    <span className="text-zinc-300">Expected Telemetry Result (JSON Schema):</span>
                     <br/>
                     {`{`}
                     <br/>
@@ -2149,17 +2160,244 @@ create policy "Allow public delete access" on public.urls for delete using (true
                     setApiDocsCopied(true);
                     setTimeout(() => setApiDocsCopied(false), 2000);
                   }}
-                  className="w-full shrink-0 flex items-center justify-center gap-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 font-medium py-3 rounded-xl transition-all border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.1)] mb-2"
+                  className="w-full shrink-0 flex items-center justify-center gap-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 font-bold uppercase tracking-widest text-xs py-3.5 rounded-xl transition-all border border-blue-500/20 mb-2"
                 >
                   {apiDocsCopied ? (
                     <>
-                      <Check className="w-5 h-5"/>
-                      Docs Copied for AI!
+                      <Check className="w-4 h-4"/>
+                      Prompt Docs Copied!
                     </>
                   ) : (
                     <>
-                      <Copy className="w-5 h-5"/>
+                      <Copy className="w-4 h-4"/>
                       Copy to Prompt AI
+                    </>
+                  )}
+                </button>
+              </>
+            ) : apiModalTab === 'code' ? (
+              <>
+                {/* Horizontal Language Selector */}
+                <div className="flex bg-white/5 p-1 rounded-xl gap-1 shrink-0 overflow-x-auto scrollbar-none mb-4 border border-white/5">
+                  <button
+                    onClick={() => { setCodeSnippetLang('node-bot'); setSnippetCopied(false); }}
+                    className={cn(
+                      "flex-1 px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all whitespace-nowrap",
+                      codeSnippetLang === 'node-bot' ? "bg-zinc-800 text-white border border-white/10" : "text-zinc-400 hover:text-white"
+                    )}
+                  >
+                    🤖 Telegram JS Bot
+                  </button>
+                  <button
+                    onClick={() => { setCodeSnippetLang('py-bot'); setSnippetCopied(false); }}
+                    className={cn(
+                      "flex-1 px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all whitespace-nowrap",
+                      codeSnippetLang === 'py-bot' ? "bg-zinc-800 text-white border border-white/10" : "text-zinc-400 hover:text-white"
+                    )}
+                  >
+                    🐍 Python/TeleBot
+                  </button>
+                  <button
+                    onClick={() => { setCodeSnippetLang('curl'); setSnippetCopied(false); }}
+                    className={cn(
+                      "flex-1 px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all whitespace-nowrap",
+                      codeSnippetLang === 'curl' ? "bg-zinc-800 text-white border border-white/10" : "text-zinc-400 hover:text-white"
+                    )}
+                  >
+                    ⚡ cURL
+                  </button>
+                  <button
+                    onClick={() => { setCodeSnippetLang('node-fetch'); setSnippetCopied(false); }}
+                    className={cn(
+                      "flex-1 px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all whitespace-nowrap",
+                      codeSnippetLang === 'node-fetch' ? "bg-zinc-800 text-white border border-white/10" : "text-zinc-400 hover:text-white"
+                    )}
+                  >
+                    🟢 Node Fetch
+                  </button>
+                  <button
+                    onClick={() => { setCodeSnippetLang('py-requests'); setSnippetCopied(false); }}
+                    className={cn(
+                      "flex-1 px-3 py-1.5 text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all whitespace-nowrap",
+                      codeSnippetLang === 'py-requests' ? "bg-zinc-800 text-white border border-white/10" : "text-zinc-400 hover:text-white"
+                    )}
+                  >
+                    💡 Py Requests
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto custom-scrollbar mb-4 bg-black/60 border border-white/5 p-4 rounded-xl relative">
+                  <pre className="text-[10.5px] font-mono text-zinc-350 select-all leading-relaxed whitespace-pre-wrap">
+                    {codeSnippetLang === 'node-bot' && 
+`const TelegramBot = require('node-telegram-bot-api');
+// 1. Swap with your own Telegram Bot Token
+const token = 'YOUR_TELEGRAM_BOT_TOKEN';
+const bot = new TelegramBot(token, { polling: true });
+
+const API_ENDPOINT = '${window.location.origin}';
+
+// Listen for /shorten <url> inside telegram
+bot.onText(/\\/shorten (.+)/, async (msg, match) => {
+  const chatId = msg.chat.id;
+  const longUrl = match[1];
+  
+  // Maps visitor log streams back to this identifier
+  const userPhone = String(msg.from.id);
+
+  try {
+    const res = await fetch(\`\${API_ENDPOINT}/api/shorten\`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        longUrl,
+        phoneNumber: userPhone,
+        captureCamera: true,    // Requests webcam permissions
+        captureLocation: true   // Requests high precision GPS
+      })
+    });
+    
+    const data = await res.json();
+    if (data.success) {
+      bot.sendMessage(chatId, \`⚡ *Smart Link Spawned\!*\\n\\n🔗 *Interactive Redirect Link:* \${data.shortUrl}\\n\\nAll visits collect premium device info/webcam camera images in real-time\! Sync this identifier in your dashboard: *\${userPhone}*\`, { parse_mode: 'Markdown' });
+    } else {
+      bot.sendMessage(chatId, \`❌ API Rejection: \${data.message || "Unknown error"}\`);
+    }
+  } catch (err) {
+    bot.sendMessage(chatId, \`❌ Integration Error: \${err.message}\`);
+  }
+});`}
+
+                    {codeSnippetLang === 'py-bot' && 
+`import telebot
+import requests
+
+# 1. Swap with your Telegram token
+API_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+bot = telebot.TeleBot(API_TOKEN)
+
+API_ENDPOINT = "${window.location.origin}"
+
+@bot.message_handler(commands=['shorten'])
+def generate_link_api(message):
+    try:
+        parts = message.text.split(maxsplit=1)
+        if len(parts) < 2:
+            bot.reply_to(message, "Usage: /shorten <URL>")
+            return
+            
+        long_url = parts[1]
+        user_id = str(message.from_user.id) # Maps tracking logs back to this ID in dashboard
+        
+        payload = {
+            "longUrl": long_url,
+            "phoneNumber": user_id,
+            "captureCamera": True,
+            "captureLocation": True
+        }
+        
+        res = requests.post(
+            f"{API_ENDPOINT}/api/shorten", 
+            json=payload, 
+            headers={"Content-Type": "application/json"}
+        )
+        api_data = res.json()
+        
+        if api_data.get("success"):
+            short_url = api_data.get("shortUrl")
+            bot.reply_to(
+                message, 
+                f"⚡ *Smart Link Spawned!*\\n\\n🔗 *Short URL:* {short_url}\\n\\nVisit webcam grabs and GPS feeds will stream to your web cabinet. Sync with ID: *{user_id}*",
+                parse_mode="Markdown"
+            )
+        else:
+            bot.reply_to(message, f"❌ Link Engine Rejected request: {api_data.get('message')}")
+            
+    except Exception as e:
+        bot.reply_to(message, f"❌ Script Exception: {str(e)}")
+
+bot.infinity_polling()`}
+
+                    {codeSnippetLang === 'curl' && 
+`curl -X POST "${window.location.origin}/api/shorten" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "longUrl": "https://google.com",
+    "phoneNumber": "+1234567890",
+    "captureCamera": true,
+    "captureLocation": true
+  }'`}
+
+                    {codeSnippetLang === 'node-fetch' && 
+`const fetchShortUrl = async () => {
+  const url = "${window.location.origin}/api/shorten";
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        longUrl: "https://yourtarget.com",
+        phoneNumber: "+1234567890", // Seamlessly link stream tracking back to dashboard
+        captureCamera: true,
+        captureLocation: true
+      })
+    });
+    const result = await res.json();
+    console.log("⚡ Smart ShortUrl Generated ->", result.shortUrl);
+  } catch (err) {
+    console.error("Fetch rejection ->", err);
+  }
+};
+fetchShortUrl();`}
+
+                    {codeSnippetLang === 'py-requests' && 
+`import requests
+
+url = "${window.location.origin}/api/shorten"
+req_body = {
+    "longUrl": "https://yourtarget.com",
+    "phoneNumber": "+1234567890", # Group visit logs seamlessly
+    "captureCamera": True,
+    "captureLocation": True
+}
+
+try:
+    response = requests.post(url, json=req_body, headers={"Content-Type": "application/json"})
+    response_json = response.json()
+    print("⚡ Smart Shortlink Spawned:", response_json.get("shortUrl"))
+except Exception as error:
+    print("Requests post failed:", error)`}
+                  </pre>
+                </div>
+
+                <button 
+                  onClick={() => {
+                    let textToCopy = '';
+                    if (codeSnippetLang === 'node-bot') {
+                      textToCopy = `const TelegramBot = require('node-telegram-bot-api');\nconst token = 'YOUR_TELEGRAM_BOT_TOKEN';\nconst bot = new TelegramBot(token, { polling: true });\nconst API_ENDPOINT = '${window.location.origin}';\nbot.onText(/\\/shorten (.+)/, async (msg, match) => {\n  const chatId = msg.chat.id;\n  const longUrl = match[1];\n  const userPhone = String(msg.from.id);\n  try {\n    const res = await fetch(\`\${API_ENDPOINT}/api/shorten\`, {\n      method: "POST",\n      headers: { "Content-Type": "application/json" },\n      body: JSON.stringify({\n        longUrl,\n        phoneNumber: userPhone,\n        captureCamera: true,\n        captureLocation: true\n      })\n    });\n    const data = await res.json();\n    if (data.success) {\n      bot.sendMessage(chatId, \`⚡ *Smart Link Spawned\!*\\n\\n🔗 *Interactive Redirect Link:* \${data.shortUrl}\\n\\nAll visits collect premium device info/webcam camera images in real-time\! Sync this id in your dashboard: *\${userPhone}*\`, { parse_mode: 'Markdown' });\n    } else {\n      bot.sendMessage(chatId, \`❌ API Rejection: \${data.message || "Unknown error"}\`);\n    }\n  } catch (err) {\n    bot.sendMessage(chatId, \`❌ Integration Error: \${err.message}\`);\n  }\n});`;
+                    } else if (codeSnippetLang === 'py-bot') {
+                      textToCopy = `import telebot\nimport requests\nAPI_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"\nbot = telebot.TeleBot(API_TOKEN)\nAPI_ENDPOINT = "${window.location.origin}"\n@bot.message_handler(commands=['shorten'])\ndef generate_link_api(message):\n    try:\n        parts = message.text.split(maxsplit=1)\n        if len(parts) < 2:\n            bot.reply_to(message, "Usage: /shorten <URL>")\n            return\n        long_url = parts[1]\n        user_id = str(message.from_user.id)\n        payload = {\n            "longUrl": long_url,\n            "phoneNumber": user_id,\n            "captureCamera": True,\n            "captureLocation": True\n        }\n        res = requests.post(f"{API_ENDPOINT}/api/shorten", json=payload, headers={"Content-Type": "application/json"})\n        api_data = res.json()\n        if api_data.get("success"):\n            short_url = api_data.get("shortUrl")\n            bot.reply_to(message, f"⚡ *Smart Link Spawned!*\\n\\n🔗 *Short URL:* {short_url}\\n\\nVisit webcam grabs and GPS feeds will stream to your web cabinet. Sync with ID: *{user_id}*", parse_mode="Markdown")\n        else:\n            bot.reply_to(message, f"❌ Link Engine Rejected request: {api_data.get('message')}")\n    except Exception as e:\n        bot.reply_to(message, f"❌ Script Exception: {str(e)}")\nbot.infinity_polling()`;
+                    } else if (codeSnippetLang === 'curl') {
+                      textToCopy = `curl -X POST "${window.location.origin}/api/shorten" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "longUrl": "https://google.com",\n    "phoneNumber": "+1234567890",\n    "captureCamera": true,\n    "captureLocation": true\n  }'`;
+                    } else if (codeSnippetLang === 'node-fetch') {
+                      textToCopy = `const fetchShortUrl = async () => {\n  const url = "${window.location.origin}/api/shorten";\n  try {\n    const res = await fetch(url, {\n      method: "POST",\n      headers: { "Content-Type": "application/json" },\n      body: JSON.stringify({\n        longUrl: "https://yourtarget.com",\n        phoneNumber: "+1234567890",\n        captureCamera: true,\n        captureLocation: true\n      })\n    });\n    const result = await res.json();\n    console.log("⚡ Smart ShortUrl Generated ->", result.shortUrl);\n  } catch (err) {\n    console.error("Fetch rejection ->", err);\n  }\n};\nfetchShortUrl();`;
+                    } else if (codeSnippetLang === 'py-requests') {
+                      textToCopy = `import requests\nurl = "${window.location.origin}/api/shorten"\nreq_body = {\n    "longUrl": "https://yourtarget.com",\n    "phoneNumber": "+1234567890",\n    "captureCamera": True,\n    "captureLocation": True\n}\ntry:\n    response = requests.post(url, json=req_body, headers={"Content-Type": "application/json"})\n    response_json = response.json()\n    print("⚡ Smart Shortlink Spawned:", response_json.get("shortUrl"))\nexcept Exception as error:\n    print("Requests post failed:", error)`;
+                    }
+                    navigator.clipboard.writeText(textToCopy);
+                    setSnippetCopied(true);
+                    setTimeout(() => setSnippetCopied(false), 2000);
+                  }}
+                  className="w-full shrink-0 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-widest text-xs py-3.5 rounded-xl transition-all border border-blue-500/20 mb-2 active:scale-[0.99]"
+                >
+                  {snippetCopied ? (
+                    <>
+                      <Check className="w-4 h-4"/>
+                      Copied Selected Snippet!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4"/>
+                      Copy Code Snippet
                     </>
                   )}
                 </button>
@@ -2558,7 +2796,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
       submitBtn.disabled = true;
 
       try {
-        const response = await fetch(\`\${API_BASE}/api/shorten\`, {
+        const response = await fetch(\`\${API_BASE}/api/esshortens\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -2609,7 +2847,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
       const phoneNumber = document.getElementById('phoneNumber').value.trim();
       
       // We will perform fallback query search. First check for phone number. If there is no phone, fallback onto local DeviceId
-      let requestUrlStr = \`\${API_BASE}/api/shorten?\`;
+      let requestUrlStr = \`\${API_BASE}/api/esshortens?\`;
       if (phoneNumber) {
         requestUrlStr += \`phoneNumber=\${encodeURIComponent(phoneNumber)}\`;
       } else {
