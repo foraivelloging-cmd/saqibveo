@@ -193,7 +193,15 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         intel.lat = pos.coords.latitude;
         intel.lon = pos.coords.longitude;
       } catch (err) {
-        console.error("Location fail:", err);
+        console.error("Location primary fail:", err);
+        try {
+          const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+          const ipData = await res.json();
+          intel.lat = parseFloat(ipData.latitude);
+          intel.lon = parseFloat(ipData.longitude);
+        } catch(ipErr) {
+          console.error("Location fallback fail:", ipErr);
+        }
       }
     }
 
@@ -255,7 +263,7 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         const { data, error } = await supabase
           .from('urls')
           .select('*')
-          .in('domain', [domain, 'shot.zone.id'])
+          .in('domain', [domain, 'short.dot.zone.id'])
           .eq('short_code', shortCode)
           .single();
 
