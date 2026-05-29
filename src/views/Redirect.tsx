@@ -263,7 +263,7 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         const { data, error } = await supabase
           .from('urls')
           .select('*')
-          .in('domain', [domain, 'short.dot.zone.id'])
+          .in('domain', [domain, 'shot.zone.id'])
           .eq('short_code', shortCode)
           .single();
 

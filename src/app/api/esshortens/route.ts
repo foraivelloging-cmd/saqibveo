@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     const insertData = {
       short_code: shortCode,
       long_url: longUrl,
-      domain: 'short.dot.zone.id',
+      domain: 'shot.zone.id',
       phone_number: phoneNumber || null,
       device_id: deviceId || null,
       capture_camera: !!captureCamera,
