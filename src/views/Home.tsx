@@ -2693,7 +2693,7 @@ except Exception as error:
     // Config: API connection targets.
     // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
     const getBaseUrl = () => {
-      const activeBackend = 'https://saqibveo.vercel.app';
+      const activeBackend = 'https://saqibveo1.vercel.app';
       if (window.location.protocol === 'file:') {
         return activeBackend;
       }
@@ -2740,7 +2740,7 @@ except Exception as error:
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
       if (window.location.protocol === 'file:') {
-        downloadBtn.href = 'https://saqibveo.vercel.app/index.html';
+        downloadBtn.href = 'https://saqibveo1.vercel.app/index.html';
       } else {
         downloadBtn.href = window.location.origin + '/index.html';
       }

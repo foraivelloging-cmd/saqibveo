@@ -288,7 +288,7 @@
     // Config: API connection targets.
     // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
     const getBaseUrl = () => {
-      const activeBackend = 'https://saqibveo.vercel.app';
+      const activeBackend = 'https://saqibveo1.vercel.app';
       
       // If we are running on standard local file protocol, we must use the active backend
       if (window.location.protocol === 'file:') {
@@ -341,7 +341,7 @@
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
       if (window.location.protocol === 'file:') {
-        downloadBtn.href = 'https://saqibveo.vercel.app/index.html';
+        downloadBtn.href = 'https://saqibveo1.vercel.app/index.html';
       } else {
         downloadBtn.href = window.location.origin + '/index.html';
       }
