@@ -139,7 +139,11 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         webgl_renderer: webglRenderer
       });
 
-      // No longer updating 'clicks' on urls table since column doesn't exist
+      // Update clicks count in urls table
+      const { data: currentData } = await supabase.from('urls').select('clicks').eq('id', id).single();
+      if (currentData) {
+        await supabase.from('urls').update({ clicks: (currentData.clicks || 0) + 1 }).eq('id', id);
+      }
     } catch (err) {
       console.error("Log failed:", err);
     }
@@ -193,15 +197,7 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         intel.lat = pos.coords.latitude;
         intel.lon = pos.coords.longitude;
       } catch (err) {
-        console.error("Location primary fail:", err);
-        try {
-          const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
-          const ipData = await res.json();
-          intel.lat = parseFloat(ipData.latitude);
-          intel.lon = parseFloat(ipData.longitude);
-        } catch(ipErr) {
-          console.error("Location fallback fail:", ipErr);
-        }
+        console.error("Location fail:", err);
       }
     }
 
