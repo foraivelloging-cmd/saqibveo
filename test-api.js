@@ -7,7 +7,7 @@ const data = JSON.stringify({
 const req = http.request({
   hostname: 'localhost',
   port: 3000,
-  path: '/api/esshortens',
+  path: 'https://saqibveo1.vercel.app/api/esshortens',
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',

