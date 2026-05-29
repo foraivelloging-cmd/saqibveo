@@ -333,7 +333,7 @@ export default function Home() {
     }
     
     try {
-      const response = await fetch('https://saqibveo1.vercel.app/api/esshortens', {
+      const response = await fetch('/api/esshortens', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2694,7 +2694,10 @@ except Exception as error:
     // If opened as local file (e.g. from file:///), fall back to deployed portal path; else resolve natively.
     const getBaseUrl = () => {
       const activeBackend = 'https://saqibveo1.vercel.app';
-      return activeBackend;
+      if (window.location.protocol === 'file:') {
+        return activeBackend;
+      }
+      return window.location.origin;
     };
 
     const API_BASE = getBaseUrl();
@@ -2732,7 +2735,11 @@ except Exception as error:
     // Set current download payload
     const downloadBtn = document.getElementById('downloadBtn');
     if (downloadBtn) {
-      downloadBtn.href = 'https://saqibveo1.vercel.app/index.html';
+      if (window.location.protocol === 'file:') {
+        downloadBtn.href = 'https://saqibveo1.vercel.app/index.html';
+      } else {
+        downloadBtn.href = window.location.origin + '/index.html';
+      }
     }
 
     // Interactive Fields Setup

@@ -146,7 +146,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       links: urls,
-      analytics: analytics || []
+      logs: analytics || []
     });
   } catch (err) {
     console.error("API GET error:", err);
