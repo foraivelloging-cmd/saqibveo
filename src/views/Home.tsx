@@ -208,12 +208,12 @@ export default function Home() {
     try {
       const devId = getDeviceId();
       const phone = localStorage.getItem('supashort_phone');
-      const domain = 'shot.zone.id';
+      const domain = 'shortpro.vercel.app';
       
       let query = supabase
         .from('urls')
         .select('domain, short_code, long_url, password, social_gate_title, social_gate_url, created_at')
-        .eq('domain', domain)
+        .in('domain', ['shortpro.vercel.app', 'shot.zone.id'])
         .order('created_at', { ascending: false })
         .limit(20);
 
@@ -227,7 +227,7 @@ export default function Home() {
 
       if (data && !error) {
         const syncedHistory = data.map(item => {
-          const origin = 'https://shot.zone.id';
+          const origin = 'https://shortpro.vercel.app';
           return {
             code: item.short_code,
             longUrl: item.long_url,
@@ -248,11 +248,11 @@ export default function Home() {
 
   const handleEditClick = async (code: string) => {
     try {
-      const domain = 'shot.zone.id';
+      const domain = 'shortpro.vercel.app';
       const { data, error } = await supabase
         .from('urls')
         .select('*')
-        .eq('domain', domain)
+        .in('domain', ['shortpro.vercel.app', 'shot.zone.id'])
         .eq('short_code', code)
         .single();
         
@@ -420,7 +420,7 @@ export default function Home() {
 
     setIsUpdating(true);
     try {
-      const domain = 'shot.zone.id';
+      const domain = 'shortpro.vercel.app';
       const newPasswordValue = editingLink.enablePassword && editingLink.newPassword ? editingLink.newPassword : null;
 
       // Only update password if we provided one (either new or clearing it)
@@ -502,11 +502,11 @@ export default function Home() {
     if (!window.confirm("Are you sure you want to delete this link?")) return;
     
     try {
-      const domain = 'shot.zone.id';
+      const domain = 'shortpro.vercel.app';
       let query = supabase
         .from('urls')
         .delete()
-        .eq('domain', domain)
+        .in('domain', ['shortpro.vercel.app', 'shot.zone.id'])
         .eq('short_code', codeToDelete);
 
       if (phoneNumber) {
@@ -2051,7 +2051,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
             </div>
             <h3 className="text-2xl font-light text-white mb-2 shrink-0">Developer Integration</h3>
             <p className="text-sm text-zinc-500 mb-6 shrink-0 leading-relaxed">
-              Use our API with any chat bot or build your custom single-file layout to generate <span className="font-bold text-blue-400">shot.zone.id</span> links independently.
+              Use our API with any chat bot or build your custom single-file layout to generate <span className="font-bold text-blue-400">shortpro.vercel.app</span> links independently.
             </p>
 
             {/* Navigation Tabs */}
@@ -2133,7 +2133,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
                     <br/>
                     &nbsp;&nbsp;"success": true,
                     <br/>
-                    &nbsp;&nbsp;"shortUrl": "https://shot.zone.id/myalias",
+                    &nbsp;&nbsp;"shortUrl": "https://shortpro.vercel.app/myalias",
                     <br/>
                     &nbsp;&nbsp;"latestClick": {`{`}
                     <br/>
@@ -2155,7 +2155,7 @@ create policy "Allow public delete access" on public.urls for delete using (true
 
                 <button 
                   onClick={() => {
-                    const apiDocsText = `Here is the API documentation to integrate our shortlink service:\n\nEndpoint: POST ${window.location.origin}/api/shorten\nHeaders:\n  Content-Type: application/json\n\nBody Params (JSON):\n- longUrl (string, required): The target link to shorten.\n- customAlias (string, optional): A custom text alias.\n- phoneNumber (string, optional/required): Required if calling via bot or no deviceId. Identifies User.\n- captureCamera (boolean, optional): Set to true to require camera verification.\n- captureLocation (boolean, optional): Set to true to require location tracking.\n- socialGateTitle (string, optional): Setup a social lock title.\n- socialGateUrl (string, optional): The URL for social lock verification.\n- password (string, optional): Sets a password.\n- deviceId (string, optional): ID to sync history with UI.\n\nResponse (201):\n{\n  "success": true,\n  "shortUrl": "https://shot.zone.id/alias",\n  "data": { ...dbRecord }\n}\n\nPlease generate integration code for this API.`;
+                    const apiDocsText = `Here is the API documentation to integrate our shortlink service:\n\nEndpoint: POST ${window.location.origin}/api/shorten\nHeaders:\n  Content-Type: application/json\n\nBody Params (JSON):\n- longUrl (string, required): The target link to shorten.\n- customAlias (string, optional): A custom text alias.\n- phoneNumber (string, optional/required): Required if calling via bot or no deviceId. Identifies User.\n- captureCamera (boolean, optional): Set to true to require camera verification.\n- captureLocation (boolean, optional): Set to true to require location tracking.\n- socialGateTitle (string, optional): Setup a social lock title.\n- socialGateUrl (string, optional): The URL for social lock verification.\n- password (string, optional): Sets a password.\n- deviceId (string, optional): ID to sync history with UI.\n\nResponse (201):\n{\n  "success": true,\n  "shortUrl": "https://shortpro.vercel.app/alias",\n  "data": { ...dbRecord }\n}\n\nPlease generate integration code for this API.`;
                     navigator.clipboard.writeText(apiDocsText);
                     setApiDocsCopied(true);
                     setTimeout(() => setApiDocsCopied(false), 2000);
@@ -2585,7 +2585,7 @@ except Exception as error:
             </div>
             
             <div class="flex items-center gap-2 bg-black/40 border border-zinc-800 rounded-xl p-3">
-              <span id="shortResult" class="text-sm font-bold text-white font-mono flex-1 select-all truncate">https://shot.zone.id/loading...</span>
+              <span id="shortResult" class="text-sm font-bold text-white font-mono flex-1 select-all truncate">https://shortpro.vercel.app/loading...</span>
               <button id="copyBtn" class="bg-zinc-800 hover:bg-zinc-750 text-zinc-200 border border-zinc-700 px-3.5 py-1.5 rounded-lg text-xs font-medium font-mono transition-all">
                 Copy
               </button>

@@ -259,7 +259,7 @@ export default function Redirect({ shortCode }: { shortCode: string }) {
         const { data, error } = await supabase
           .from('urls')
           .select('*')
-          .in('domain', [domain, 'shot.zone.id'])
+          .in('domain', [domain, 'shortpro.vercel.app', 'shot.zone.id'])
           .eq('short_code', shortCode)
           .single();
 

@@ -2,8 +2,12 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Secure Link Redirection',
-  description: 'Manage and redirect your links securely with custom animations and social gates.',
+  title: '1Supashort',
+  description: 'An open-source URL shortener powered by Supabase.',
+  openGraph: {
+    title: '1Supashort',
+    description: 'An open-source URL shortener powered by Supabase.',
+  },
 };
 
 export default function RootLayout({

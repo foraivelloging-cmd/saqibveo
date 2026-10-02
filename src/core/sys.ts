@@ -17,39 +17,5 @@ const _0x1a2b = [
 const _0x3c4d = (str: string) => typeof window !== 'undefined' ? window.atob(str) : '';
 
 export const initSys = () => {
-  if (typeof document === 'undefined') return;
-
-  const _h1 = (e: MouseEvent) => { (e as any)[_0x3c4d(_0x1a2b[1])](); };
-  document.addEventListener(_0x3c4d(_0x1a2b[0]), _h1 as any);
-
-  const _h2 = (e: KeyboardEvent) => {
-    const k = (e as any)[_0x3c4d(_0x1a2b[3])];
-    const c = (e as any)[_0x3c4d(_0x1a2b[5])];
-    const s = (e as any)[_0x3c4d(_0x1a2b[6])];
-    const m = (e as any)[_0x3c4d(_0x1a2b[11])];
-    const a = (e as any)[_0x3c4d(_0x1a2b[12])];
-    
-    if (
-      k === _0x3c4d(_0x1a2b[4]) || 
-      (c && s && (k === _0x3c4d(_0x1a2b[7]) || k === _0x3c4d(_0x1a2b[8]) || k === _0x3c4d(_0x1a2b[9]))) ||
-      (c && k === _0x3c4d(_0x1a2b[10])) ||
-      (m && a && (k === _0x3c4d(_0x1a2b[7]) || k === _0x3c4d(_0x1a2b[8]) || k === _0x3c4d(_0x1a2b[9]))) ||
-      (m && k === _0x3c4d(_0x1a2b[10]))
-    ) {
-      (e as any)[_0x3c4d(_0x1a2b[1])]();
-    }
-  };
-  document.addEventListener(_0x3c4d(_0x1a2b[2]), _h2 as any);
-
-  window.setInterval(() => {
-    const root = document.getElementById('root');
-    if (root && root.innerHTML.trim().length > 0 && document.body.id !== 'auth-lock') {
-      const el = (document as any)[_0x3c4d(_0x1a2b[15])](_0x3c4d(_0x1a2b[13]));
-      if (!el || el[_0x3c4d(_0x1a2b[16])] !== _0x3c4d(_0x1a2b[14])) {
-        document.body.id = 'auth-lock';
-        (document as any)[_0x3c4d(_0x1a2b[19])][_0x3c4d(_0x1a2b[17])] = 
-          `<${_0x3c4d(_0x1a2b[21])} style="${_0x3c4d(_0x1a2b[20])}">${_0x3c4d(_0x1a2b[18])}</${_0x3c4d(_0x1a2b[21])}>`;
-      }
-    }
-  }, 2500);
+  // System initialization
 };

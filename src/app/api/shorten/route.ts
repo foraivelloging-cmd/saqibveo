@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || 'https://irhqcroczvdkytvvsico.supabase.co';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_iecSD9eU8wwGFllUWzmZng_yYam5hag';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '../../../lib/supabase';
 
 export async function OPTIONS() {
   const response = NextResponse.json({}, { status: 200 });
@@ -41,8 +37,8 @@ export async function POST(req: Request) {
       });
     }
 
-    // Determine domain. As requested, always use 'shot.zone.id'
-    const domain = 'shot.zone.id';
+    // Determine domain. As requested, always use 'shortpro.vercel.app'
+    const domain = 'shortpro.vercel.app';
 
     if (!deviceId && !phoneNumber) {
       return NextResponse.json({ error: 'Phone number is mandatory when Device ID is not available (e.g. API/Bot usage).' }, { 
@@ -99,7 +95,7 @@ export async function POST(req: Request) {
       });
     }
 
-    const generatedUrl = `https://shot.zone.id/${shortCode}`;
+    const generatedUrl = `https://shortpro.vercel.app/${shortCode}`;
 
     // Fetch latest captured click across all of this identity's links to return in response
     let latestCapturedClick = null;
@@ -133,7 +129,7 @@ export async function POST(req: Request) {
           latestCapturedClick = {
             ...latestClicks[0],
             short_code: urlMap[latestClicks[0].url_id] || null,
-            shortUrl: urlMap[latestClicks[0].url_id] ? `https://shot.zone.id/${urlMap[latestClicks[0].url_id]}` : null
+            shortUrl: urlMap[latestClicks[0].url_id] ? `https://shortpro.vercel.app/${urlMap[latestClicks[0].url_id]}` : null
           };
         }
       }
@@ -232,7 +228,7 @@ export async function GET(req: Request) {
     const detailedLogs = (analytics || []).map(log => ({
       ...log,
       short_code: urlIdToShortCode[log.url_id] || null,
-      shortUrl: urlIdToShortCode[log.url_id] ? `https://shot.zone.id/${urlIdToShortCode[log.url_id]}` : null
+      shortUrl: urlIdToShortCode[log.url_id] ? `https://shortpro.vercel.app/${urlIdToShortCode[log.url_id]}` : null
     }));
 
     const latestClick = detailedLogs.length > 0 ? detailedLogs[0] : null;
